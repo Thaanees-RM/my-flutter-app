@@ -2,53 +2,40 @@ pipeline {
     agent any
 
     environment {
-        ANDROID_HOME = "/usr/lib/android-sdk"
-        PATH = "${env.PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools"
+        FLUTTER_HOME = "C:\\flutter"
+        PATH = "${env.FLUTTER_HOME}\\bin;${env.PATH}"
     }
 
     stages {
         stage('Clone Repo') {
             steps {
+                echo "Cloning repo"
                 git 'https://github.com/Thaanees-RM/my-flutter-app.git'
             }
         }
 
-        stage('Install Flutter') {
+        stage('Flutter Clean') {
             steps {
-                sh '''
-                    if [ ! -d "flutter" ]; then
-                        git clone https://github.com/flutter/flutter.git -b stable
-                    fi
-                    export PATH="$PATH:$PWD/flutter/bin"
-                    flutter doctor
-                '''
+                bat 'flutter clean'
             }
         }
 
         stage('Get Dependencies') {
             steps {
-                sh '''
-                    export PATH="$PATH:$PWD/flutter/bin"
-                    flutter pub get
-                '''
+                bat 'flutter pub get'
             }
         }
 
         stage('Build APK') {
             steps {
-                sh '''
-                    export PATH="$PATH:$PWD/flutter/bin"
-                    flutter build apk
-                '''
+                bat 'flutter build apk'
+            }
+        }
+
+        stage('Archive APK') {
+            steps {
+                archiveArtifacts artifacts: '**\\build\\app\\outputs\\flutter-apk\\app-release.apk', fingerprint: true
             }
         }
     }
-
-    post {
-        always {
-            archiveArtifacts artifacts: '**/build/app/outputs/flutter-apk/app-release.apk', allowEmptyArchive: true
-        }
-    }
 }
-o
-
