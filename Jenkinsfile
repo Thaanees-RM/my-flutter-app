@@ -16,19 +16,19 @@ pipeline {
 
         stage('Flutter Clean') {
             steps {
-                bat 'flutter clean'
+                sh 'flutter clean'
             }
         }
 
         stage('Get Dependencies') {
             steps {
-                bat 'flutter pub get'
+                sh 'flutter pub get'
             }
         }
 
         stage('Build APK') {
             steps {
-                bat 'flutter build apk'
+                sh 'flutter build apk'
             }
         }
 
